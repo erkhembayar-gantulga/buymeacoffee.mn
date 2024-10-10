@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Button from '../components/button'
 
 export default function Home() {
   return (
@@ -6,10 +7,10 @@ export default function Home() {
       {/* Толгой хэсэг */}
       <header className="flex justify-between items-center p-4">
         <nav className="flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-gray-900">Түгээмэл асуултууд</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Хайрын хана</a>
+          <a href="#" className="text-secondary-600 hover:text-secondary-900">Түгээмэл асуултууд</a>
+          <a href="#" className="text-secondary-600 hover:text-secondary-900">Хайрын хана</a>
           <div className="relative group">
-            <a href="#" className="text-gray-600 hover:text-gray-900">Нөөц ▼</a>
+            <a href="#" className="text-secondary-600 hover:text-secondary-900">Нөөц ▼</a>
             {/* Доош унадаг цэс энд нэмэгдэж болно */}
           </div>
         </nav>
@@ -18,8 +19,8 @@ export default function Home() {
           <span className="font-bold text-xl">Надад кофе авч өгөөч</span>
         </div>
         <div className="flex space-x-4">
-          <button className="text-gray-600 hover:text-gray-900">Нэвтрэх</button>
-          <button className="bg-yellow-400 text-black px-4 py-2 rounded-full font-semibold">Бүртгүүлэх</button>
+          <Button variant="secondary" size="sm">Нэвтрэх</Button>
+          <Button variant="primary" size="sm">Бүртгүүлэх</Button>
         </div>
       </header>
 
@@ -31,16 +32,16 @@ export default function Home() {
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
           ))}
-          <span className="ml-2 text-gray-600">1,000,000+ бүтээгчдийн хайрыг хүлээсэн</span>
+          <span className="ml-2 text-secondary-600">1,000,000+ бүтээгчдийн хайрыг хүлээсэн</span>
         </div>
         <h1 className="text-6xl font-bold mb-4">Таны бүтээлч<br />ажлыг санхүүжүүлэх</h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-secondary-600 mb-8">
           Дэмжлэг хүлээн авах. Гишүүнчлэл эхлүүлэх. Дэлгүүр байгуулах. Энэ нь<br />таны бодсоноос илүү хялбар.
         </p>
-        <button className="bg-yellow-400 text-black text-xl px-8 py-4 rounded-full font-semibold mb-4">
+        <Button variant="primary" size="lg">
           Миний хуудсыг эхлүүлэх
-        </button>
-        <p className="text-gray-600">Энэ нь үнэгүй бөгөөд нэг минутаас бага хугацаа шаардагдана!</p>
+        </Button>
+        <p className="text-secondary-600">Энэ нь үнэгүй бөгөөд нэг минутаас бага хугацаа шаардагдана!</p>
       </main>
     </div>
   )
