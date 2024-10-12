@@ -39,4 +39,3 @@ module.exports = {
     // ... any plugins you're using
   ],
 }
-

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Button from '../components/button'
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Толгой хэсэг */}

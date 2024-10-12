@@ -1,4 +1,16 @@
-export default function Button({ children, variant = 'primary', size = 'md', ...props }) {
+import React from 'react'
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export default function Button({ 
+  children, 
+  variant = 'primary', 
+  size = 'md', 
+  ...props 
+}: ButtonProps): JSX.Element {
   const baseClasses = 'font-semibold rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2'
   const variants = {
     primary: 'bg-primary-500 text-white hover:bg-primary-600',

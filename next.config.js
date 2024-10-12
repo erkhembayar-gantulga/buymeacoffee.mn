@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove the experimental appDir option
+  // Your Next.js configuration options here
 }
 
 module.exports = nextConfig
