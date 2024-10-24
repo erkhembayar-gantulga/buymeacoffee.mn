@@ -149,3 +149,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# Prisma
+prisma/*.db

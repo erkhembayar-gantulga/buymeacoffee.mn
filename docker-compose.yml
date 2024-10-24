@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: bmc_user
+      POSTGRES_PASSWORD: test1234
+      POSTGRES_DB: bmc_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://bmc_user:test1234@postgres:5432/bmc_db
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
