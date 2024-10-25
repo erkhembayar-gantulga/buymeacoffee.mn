@@ -16,15 +16,21 @@ COPY . .
 # Generate Prisma Client
 RUN yarn prisma generate
 
-# Run migrations and seed data
-RUN yarn prisma migrate deploy
-RUN yarn prisma db seed
-
 # Build the Next.js app
 RUN yarn build
 
 # Expose the port the app runs on
 EXPOSE 3000
 
+# Copy entrypoint script and make it executable
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Copy wait-for-it script and make it executable
+COPY scripts/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Start the application
-CMD ["yarn", "start"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then yarn start; else yarn dev; fi"]
