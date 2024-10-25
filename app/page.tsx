@@ -1,7 +1,28 @@
 import Image from 'next/image'
 import Button from '../components/button'
+import { getPrismaClient } from '../lib/prisma'
+import Link from 'next/link'
+import { getInitials } from '../utils/stringUtils'
 
-export default function Home(): JSX.Element {
+async function getUsers() {
+  const prisma = getPrismaClient()
+  try {
+    const users = await prisma.user.findMany({
+      take: 3,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+    return users
+  } catch (error) {
+    console.error('Failed to fetch users:', error)
+    return []
+  }
+}
+
+export default async function Home(): Promise<JSX.Element> {
+  const users = await getUsers()
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -31,8 +52,19 @@ export default function Home(): JSX.Element {
       <section className="p-4">
         <h2 className="text-2xl font-bold mb-4">Бүтээгчид</h2>
         <div className="flex space-x-4 overflow-x-auto">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-32 h-32 bg-gray-300 rounded-lg"></div>
+          {users.map((user) => (
+            <Link href={`/${user.username}`} key={user.id} className="flex-shrink-0">
+              <div className="w-32 h-32 bg-gray-300 rounded-lg overflow-hidden">
+                <Image
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(getInitials(user.name || user.username))}&background=random&color=fff`}
+                  alt={user.name || user.username}
+                  width={128}
+                  height={128}
+                  className="object-cover w-full h-full"
+                />
+                <p className="text-secondary-600">{user.name}</p>
+              </div>
+            </Link>
           ))}
         </div>
       </section>

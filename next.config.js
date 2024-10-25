@@ -1,6 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Your Next.js configuration options here
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        pathname: '/api/**',
+      },
+    ],
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma']
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('_http_common')
+    }
+    return config
+  },
 }
 
 module.exports = nextConfig
