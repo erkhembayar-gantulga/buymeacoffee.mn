@@ -1,6 +1,9 @@
 # Use Node.js v20 as the base image
 FROM node:20-alpine
 
+# Install bash
+RUN apk add --no-cache bash
+
 # Set the working directory
 WORKDIR /app
 
