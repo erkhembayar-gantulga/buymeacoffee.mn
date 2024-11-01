@@ -16,6 +16,10 @@ RUN yarn install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
+# Set the database URL
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
 # Generate Prisma Client
 RUN yarn prisma generate
 
