@@ -16,11 +16,8 @@ RUN yarn install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
-# Set the database URL
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
-
-# Generate Prisma Client
+# Generate Prisma Client without database validation
+ENV PRISMA_GENERATE_SKIP_VALIDATE=true
 RUN yarn prisma generate
 
 # Build the Next.js app
