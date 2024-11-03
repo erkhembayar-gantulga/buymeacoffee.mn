@@ -1,11 +1,10 @@
 import Image from 'next/image'
 import Button from '../components/button'
-import { getPrismaClient } from '../lib/prisma'
+import prisma from '../lib/prisma'
 import Link from 'next/link'
 import { getInitials } from '../utils/stringUtils'
 
 async function getUsers() {
-  const prisma = getPrismaClient()
   try {
     const users = await prisma.user.findMany({
       take: 3,
