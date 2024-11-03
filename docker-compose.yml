@@ -20,6 +20,9 @@ services:
       - .:/app
     ports:
       - "3000:3000"
+    environment:
+      DATABASE_HOSTNAME: db
+      DATABASE_PORT: 5432
     depends_on:
       db:
         condition: service_healthy
