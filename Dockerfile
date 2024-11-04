@@ -7,6 +7,13 @@ RUN apk add --no-cache bash
 # Set the working directory
 WORKDIR /app
 
+ARG DATABASE_URL
+ARG DATABASE_HOSTNAME
+ARG DATABASE_PORT
+ENV DATABASE_URL=${DATABASE_URL}
+ENV DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+ENV DATABASE_PORT=${DATABASE_PORT}
+
 # Copy package.json and yarn.lock
 COPY package.json yarn.lock ./
 
