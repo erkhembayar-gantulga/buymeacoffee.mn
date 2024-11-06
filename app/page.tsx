@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Coffee } from "lucide-react"
 import Link from "next/link"
 import { getInitials } from '../utils/stringUtils'
+import Header from "@/components/header"
 
 async function getUsers() {
   try {
@@ -26,20 +27,7 @@ export default async function Home(): Promise<JSX.Element> {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
-      <header className="border-b">
-        <div className="container flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <Coffee className="h-6 w-6" />
-            <h1 className="text-xl font-semibold">Надад кофе авч өгөөч</h1>
-          </div>
-          <Button 
-            variant="outline" 
-            className="border-2 border-emerald-500 text-emerald-500 hover:bg-emerald-50 bg-white"
-          >
-            Нэвтрэх
-          </Button>
-        </div>
-      </header>
+      <Header />
       
       <main className="container px-4 py-12">
         <div className="mx-auto max-w-2xl text-center">

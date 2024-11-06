@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import Button from '../../components/button'
-import Header from '../../components/header'
+import Header from "@/components/header"
 import SupportForm from '../../components/support-form'
 import CommentsList from '../../components/comments-list'
 
@@ -60,7 +59,7 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header showLoginButton={false} />
 
       <main className="flex-grow flex flex-col md:flex-row p-4 gap-8">
         {/* Left column: Profile Image and About */}
