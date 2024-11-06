@@ -51,16 +51,15 @@ export default async function Home(): Promise<JSX.Element> {
         <div className="mt-16">
           <h3 className="mb-6 text-xl font-semibold">Бүтээгчид</h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link href="#">
-              <Card className="group relative aspect-square bg-rose-100 p-6 transition-colors hover:bg-rose-200">
-                <span className="text-2xl font-bold text-rose-900">SS</span>
-              </Card>
-            </Link>
-            <Link href="#">
-              <Card className="group relative aspect-square bg-amber-100 p-6 transition-colors hover:bg-amber-200">
-                <span className="text-2xl font-bold text-amber-900">JD</span>
-              </Card>
-            </Link>
+            {users.map(user => (
+              <Link key={user.username} href={`/${user.username}`}>
+                <Card className="group relative aspect-square bg-amber-100 p-6 transition-colors hover:bg-amber-200">
+                  <span className="text-2xl font-bold text-amber-900 ">
+                    {getInitials(user.name || user.username)}
+                  </span>
+                </Card>
+              </Link>
+            ))}
           </div>
         </div>
 
