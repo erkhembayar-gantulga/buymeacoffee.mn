@@ -7,10 +7,11 @@ RUN apk add --no-cache bash
 # Set the working directory
 WORKDIR /app
 
-ARG DATABASE_URL
+# Set the database URL differently because DATABASE_URL isn't available in the build stage
+ARG DB_URL
 ARG DATABASE_HOSTNAME
 ARG DATABASE_PORT
-ENV DATABASE_URL=${DATABASE_URL}
+ENV DATABASE_URL=${DB_URL}
 ENV DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
 ENV DATABASE_PORT=${DATABASE_PORT}
 

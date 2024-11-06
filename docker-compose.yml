@@ -15,14 +15,16 @@ services:
       timeout: 5s
       retries: 5
   app:
-    build: .
+    build:
+      context: .
+      args:
+        DB_URL: postgresql://bmc_user:test1234@db:5432/bmc_db?schema=public
+        DATABASE_HOSTNAME: db
+        DATABASE_PORT: 5432
     volumes:
       - .:/app
     ports:
       - "3000:3000"
-    environment:
-      DATABASE_HOSTNAME: db
-      DATABASE_PORT: 5432
     depends_on:
       db:
         condition: service_healthy
