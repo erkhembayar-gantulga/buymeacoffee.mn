@@ -1,29 +1,14 @@
 import Image from 'next/image'
-import prisma from '../lib/prisma'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Coffee } from "lucide-react"
 import Link from "next/link"
 import { getInitials } from '../utils/stringUtils'
 import Header from "@/components/header"
-
-async function getUsers() {
-  try {
-    const users = await prisma.user.findMany({
-      take: 3,
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
-    return users
-  } catch (error) {
-    console.error('Failed to fetch users:', error)
-    return []
-  }
-}
+import { UserRepository } from '@/app/repositories/userRepository'
 
 export default async function Home(): Promise<JSX.Element> {
-  const users = await getUsers()
+  const users = await UserRepository.getCreators()
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
