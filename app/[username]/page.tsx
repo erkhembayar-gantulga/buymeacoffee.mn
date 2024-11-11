@@ -28,7 +28,7 @@ async function fetchCreatorData(username: string): Promise<CreatorData | null> {
     return {
       username: user.username,
       bio: user.bio || `${username} is a creator based in Mongolia.`,
-      profileImage: user.profileImage || '/images/default-profile.jpg',
+      profileImage: user.profileImage,
       name: user.name,
     };
   } catch (error) {
@@ -71,7 +71,7 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center space-y-4">
                   <Avatar className="h-32 w-32">
-                    <AvatarImage alt="Creator" src={creatorData.profileImage} />
+                    <AvatarImage alt="Creator" src={creatorData.profileImage || undefined} />
                     <AvatarFallback>
                       {creatorData.name?.substring(0, 2) || 'CR'}
                     </AvatarFallback>
