@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^5.21.1",
+    "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",

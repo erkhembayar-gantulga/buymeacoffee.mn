@@ -1,7 +1,11 @@
-import Image from 'next/image'
 import Header from "@/components/header"
-import SupportForm from '../../components/support-form'
-import CommentsList from '../../components/comments-list'
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Coffee, Facebook, Heart, Instagram, MessageCircle, Music, Twitter, Youtube } from "lucide-react"
 
 interface CreatorProfileProps {
   params: { username: string }
@@ -58,45 +62,133 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
   const creatorData = await fetchCreatorData(username)
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
       <Header showLoginButton={false} />
 
-      <main className="flex-grow flex flex-col md:flex-row p-4 gap-8">
-        {/* Left column: Profile Image and About */}
-        <div className="md:w-1/3">
-          <div className="mb-4">
-            <Image
-              src={creatorData.profileImage}
-              alt={`${username}'s profile`}
-              width={300}
-              height={300}
-              className="rounded-lg w-full h-auto"
-            />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold mb-2">About</h2>
-            <p className="mb-4">{creatorData.bio}</p>
-            <div className="flex gap-4">
-              {Object.entries(creatorData.socialLinks).map(([platform, url]) => (
-                <a
-                  key={platform}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  {/* Add social icons here */}
-                  {platform}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
+      <main className="container py-8">
+        <div className="grid gap-8 md:grid-cols-2">
+          {/* Left Column */}
+          <div className="space-y-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center space-y-4">
+                  <Avatar className="h-32 w-32">
+                    <AvatarImage alt="Creator" src="/placeholder.svg" />
+                    <AvatarFallback>CR</AvatarFallback>
+                  </Avatar>
+                  <h2 className="text-2xl font-bold">{ creatorData?.name }</h2>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Right column: Support form and Comments */}
-        <div className="md:w-2/3">
-          <SupportForm username={username} />
-          <CommentsList username={username} />
+            <Card>
+              <CardHeader>
+                <CardTitle>About</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Hi! I'm a creative content creator passionate about sharing interesting stories and ideas. Your support
+                  helps me continue creating content that matters.
+                </p>
+                <div className="mt-6 flex space-x-4">
+                  <Button size="icon" variant="ghost">
+                    <Twitter className="h-5 w-5" />
+                  </Button>
+                  <Button size="icon" variant="ghost">
+                    <Facebook className="h-5 w-5" />
+                  </Button>
+                  <Button size="icon" variant="ghost">
+                    <Youtube className="h-5 w-5" />
+                  </Button>
+                  <Button size="icon" variant="ghost">
+                    <Instagram className="h-5 w-5" />
+                  </Button>
+                  <Button size="icon" variant="ghost">
+                    <Music className="h-5 w-5" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Support Creator</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 flex justify-between">
+                  <Button variant="outline" className="w-[30%]">
+                    <Coffee className="mr-2 h-4 w-4" />
+                    $1
+                  </Button>
+                  <Button variant="outline" className="w-[30%]">
+                    <Coffee className="mr-2 h-4 w-4" />
+                    $3
+                  </Button>
+                  <Button variant="outline" className="w-[30%]">
+                    <Coffee className="mr-2 h-4 w-4" />
+                    $5
+                  </Button>
+                </div>
+                <div className="space-y-4">
+                  <Input placeholder="Your name" />
+                  <Textarea placeholder="Leave a message..." />
+                  <Button className="w-full">Support</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Support</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">John Doe</p>
+                      <p className="text-sm text-muted-foreground">Thanks!</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Coffee className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">1</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>AB</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Alice Brown</p>
+                      <p className="text-sm text-muted-foreground">Баярлалаа</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Coffee className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">3</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>MS</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Mike Smith</p>
+                      <p className="text-sm text-muted-foreground">bought a coffee</p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Coffee className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">1</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>
