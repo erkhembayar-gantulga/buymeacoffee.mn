@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Coffee, Facebook, Heart, Instagram, MessageCircle, Music, Twitter, Youtube } from "lucide-react"
+import { UserRepository } from "@/app/repositories/userRepository"
 
 interface CreatorProfileProps {
   params: { username: string }
@@ -13,53 +14,50 @@ interface CreatorProfileProps {
 
 interface CreatorData {
   username: string;
-  bio: string;
-  profileImage: string;
-  socialLinks: {
-    twitter?: string;
-    instagram?: string;
-    youtube?: string;
-  };
+  bio: string | null;
+  profileImage: string | null;
+  name: string | null;
 }
 
-async function fetchCreatorData(username: string): Promise<CreatorData> {
-  // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+async function fetchCreatorData(username: string): Promise<CreatorData | null> {
+  try {
+    const user = await UserRepository.getCreatorByUsername(username);
 
-  // Mock data based on username
-  const mockData: Record<string, CreatorData> = {
-    johndoe: {
-      username: 'johndoe',
-      bio: 'Passionate photographer capturing the beauty of Mongolia. Join me on my visual journey through this stunning country!',
-      profileImage: '/images/johndoe-profile.jpg',
-      socialLinks: {
-        instagram: 'https://instagram.com/johndoe_photos',
-        twitter: 'https://twitter.com/johndoe_photos'
-      }
-    },
-    sarahsmith: {
-      username: 'sarahsmith',
-      bio: 'Nomadic lifestyle blogger exploring the traditions of Mongolia. Let\'s discover the hidden gems together!',
-      profileImage: '/images/sarahsmith-profile.jpg',
-      socialLinks: {
-        youtube: 'https://youtube.com/c/sarahsmithtravels',
-        instagram: 'https://instagram.com/sarah_travels'
-      }
-    }
-  };
+    if (!user) return null;
 
-  // Return mock data if exists, otherwise return default data
-  return mockData[username] || {
-    username,
-    bio: `${username} is a creator based in Mongolia. Support their work!`,
-    profileImage: '/images/default-profile.jpg',
-    socialLinks: {}
-  };
+    return {
+      username: user.username,
+      bio: user.bio || `${username} is a creator based in Mongolia.`,
+      profileImage: user.profileImage || '/images/default-profile.jpg',
+      name: user.name,
+    };
+  } catch (error) {
+    console.error('Failed to fetch creator data:', error);
+    return null;
+  }
 }
 
 export default async function CreatorProfile({ params }: CreatorProfileProps) {
-  const { username } = params
-  const creatorData = await fetchCreatorData(username)
+  const { username } = params;
+  const creatorData = await fetchCreatorData(username);
+
+  if (!creatorData) {
+    // Handle case when creator is not found
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
+        <Header showLoginButton={false} />
+        <main className="container py-8">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold">Creator not found</h2>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
@@ -73,10 +71,12 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center space-y-4">
                   <Avatar className="h-32 w-32">
-                    <AvatarImage alt="Creator" src="/placeholder.svg" />
-                    <AvatarFallback>CR</AvatarFallback>
+                    <AvatarImage alt="Creator" src={creatorData.profileImage} />
+                    <AvatarFallback>
+                      {creatorData.name?.substring(0, 2) || 'CR'}
+                    </AvatarFallback>
                   </Avatar>
-                  <h2 className="text-2xl font-bold">{ creatorData?.name }</h2>
+                  <h2 className="text-2xl font-bold">{creatorData.name || creatorData.username}</h2>
                 </div>
               </CardContent>
             </Card>
@@ -87,8 +87,7 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Hi! I'm a creative content creator passionate about sharing interesting stories and ideas. Your support
-                  helps me continue creating content that matters.
+                  {creatorData.bio}
                 </p>
                 <div className="mt-6 flex space-x-4">
                   <Button size="icon" variant="ghost">

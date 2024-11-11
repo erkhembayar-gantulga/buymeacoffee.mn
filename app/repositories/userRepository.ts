@@ -16,4 +16,16 @@ export class UserRepository {
       return []
     }
   }
+
+  static async getCreatorByUsername(username: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { username }
+      });
+      return user;
+    } catch (error) {
+      console.error('Failed to fetch creator data:', error);
+      return null;
+    }
+  }
 } 
