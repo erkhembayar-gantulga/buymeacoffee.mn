@@ -1,5 +1,7 @@
+'use client'
+
 import { Coffee } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import SignInButton from "@/components/SignInButton"
 
 interface HeaderProps {
   showLoginButton?: boolean
@@ -14,13 +16,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
           <h1 className="text-xl font-semibold">Надад кофе авч өгөөч</h1>
         </div>
         {showLoginButton && (
-          <Button 
-            variant="outline" 
-            className="border-2 border-emerald-500 text-emerald-500 
-              hover:bg-emerald-50 bg-white"
-          >
-            Нэвтрэх
-          </Button>
+          <SignInButton />
         )}
       </div>
     </header>

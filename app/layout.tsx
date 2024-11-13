@@ -1,6 +1,7 @@
 import './globals.css'
 import { ThemeProvider } from '../contexts/ThemeContext'
 import { ReactNode } from 'react'
+import { SessionProvider } from "next-auth/react"
 
 export const metadata = {
   title: 'Buy Me a Coffee - Mongolia',
@@ -18,9 +19,11 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
   return (
-    <html lang="en">
+    <html lang="mn">
       <ThemeProvider>
-        <body>{children}</body>
+        <SessionProvider>
+          <body>{children}</body>
+        </SessionProvider>
       </ThemeProvider>
     </html>
   )
