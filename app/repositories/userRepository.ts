@@ -17,7 +17,7 @@ export class UserRepository {
     }
   }
 
-  static async getCreatorByUsername(username: string): Promise<User | null> {
+  static async findByUsername(username: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
         where: { username }

@@ -22,7 +22,7 @@ interface CreatorData {
 
 async function fetchCreatorData(username: string): Promise<CreatorData | null> {
   try {
-    const user = await UserRepository.getCreatorByUsername(username);
+    const user = await UserRepository.findByUsername(username);
 
     if (!user) return null;
 

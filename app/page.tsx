@@ -15,7 +15,7 @@ export default async function Home(): Promise<JSX.Element> {
   
   // Get current user's profile if they're logged in
   const currentUserProfile = session?.user ? 
-    await UserRepository.getCreatorByUsername(session.user.username) : null
+    await UserRepository.findByUsername(session.user.username) : null
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
