@@ -7,9 +7,15 @@ import { getInitials } from '../utils/stringUtils'
 import Header from "@/components/header"
 import { UserRepository } from '@/app/repositories/userRepository'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { auth } from "@/auth"
 
 export default async function Home(): Promise<JSX.Element> {
   const users = await UserRepository.getCreators()
+  const session = await auth()
+  
+  // Get current user's profile if they're logged in
+  const currentUserProfile = session?.user ? 
+    await UserRepository.getCreatorByUsername(session.user.username) : null
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
@@ -23,7 +29,9 @@ export default async function Home(): Promise<JSX.Element> {
           <p className="mb-8 text-muted-foreground">
             Дэмжлэг хүлээн авах. Гишүүнчлэл эхлүүлэх. Дэлгүүр байгуулах. Энэ нь таны бодсоноос илүү хялбар.
           </p>
-          <Link href="/create">
+          <Link 
+            href={currentUserProfile ? `/${currentUserProfile.username}` : "/create"}
+          >
             <Button 
               size="lg" 
               className="!bg-emerald-500 hover:!bg-emerald-600"
