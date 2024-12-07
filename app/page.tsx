@@ -22,12 +22,14 @@ export default async function Home(): Promise<JSX.Element> {
           <p className="mb-8 text-muted-foreground">
             Дэмжлэг хүлээн авах. Гишүүнчлэл эхлүүлэх. Дэлгүүр байгуулах. Энэ нь таны бодсоноос илүү хялбар.
           </p>
-          <Button 
-            size="lg" 
-            className="!bg-emerald-500 hover:!bg-emerald-600"
-          >
-            Миний хуудсыг эхлүүлэх
-          </Button>
+          <Link href="/create">
+            <Button 
+              size="lg" 
+              className="!bg-emerald-500 hover:!bg-emerald-600"
+            >
+              Миний хуудсыг эхлүүлэх
+            </Button>
+          </Link>
           <p className="mt-4 text-sm text-muted-foreground">
             Энэ нь үнэгүй бөгөөд нэг минутаас бага хугацаа шаарддагдана!
           </p>
