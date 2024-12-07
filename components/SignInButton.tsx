@@ -13,8 +13,7 @@ export default function SignInButton() {
         <span className="text-emerald-500">{session.user.name}</span>
         <Button 
           variant="outline" 
-          className="border-2 border-red-500 text-red-500 
-            hover:bg-red-50 bg-white"
+          className="border-2 bg-white"
           onClick={() => signOut()}
         >
           Гарах
