@@ -16,6 +16,7 @@ export default function CreatePage() {
     username: '',
     bio: ''
   })
+  const [error, setError] = useState('')
 
   if (status === "loading") {
     return <div>Loading...</div>
@@ -28,6 +29,7 @@ export default function CreatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     
     try {
       const response = await fetch('/api/creators', {
@@ -40,9 +42,13 @@ export default function CreatePage() {
 
       if (response.ok) {
         router.push(`/${formData.username}`)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Хуудас үүсгэхэд алдаа гарлаа')
       }
     } catch (error) {
       console.error('Failed to create creator page:', error)
+      setError('Хуудас үүсгэхэд алдаа гарлаа')
     }
   }
 
@@ -68,7 +74,11 @@ export default function CreatePage() {
                     username: e.target.value
                   }))}
                   required
+                  className={error ? 'border-red-500' : ''}
                 />
+                {error && (
+                  <p className="text-sm text-red-500 mt-1">{error}</p>
+                )}
               </div>
               <div>
                 <label htmlFor="bio" className="block text-sm font-medium mb-1">

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const session = await auth()
     
     if (!session?.user?.email) {
-      return new NextResponse("Unauthorized", { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const body = await request.json()
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     })
 
     if (existingUser) {
-      return new NextResponse("Username already taken", { status: 400 })
+      return NextResponse.json({ error: "Username already taken" }, { status: 400 })
     }
 
     // Update user record with creator info
@@ -34,6 +34,6 @@ export async function POST(request: Request) {
     return NextResponse.json(user)
   } catch (error) {
     console.error('Failed to create creator:', error)
-    return new NextResponse("Internal Server Error", { status: 500 })
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 } 

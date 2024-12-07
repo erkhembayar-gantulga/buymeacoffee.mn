@@ -52,7 +52,7 @@ export async function PUT(
       })
 
       if (existingUser) {
-        return new NextResponse("Username already taken", { status: 400 })
+        return NextResponse.json({ error: "Username already taken" }, { status: 400 })
       }
     }
 
