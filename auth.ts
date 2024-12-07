@@ -1,4 +1,5 @@
 import NextAuth, { Session } from "next-auth"
+import prisma from "@/lib/prisma"
 import Google from "next-auth/providers/google"
 import { UserRepository } from '@/app/repositories/userRepository'
 
