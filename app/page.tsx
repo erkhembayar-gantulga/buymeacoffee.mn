@@ -6,6 +6,7 @@ import Link from "next/link"
 import { getInitials } from '../utils/stringUtils'
 import Header from "@/components/header"
 import { UserRepository } from '@/app/repositories/userRepository'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default async function Home(): Promise<JSX.Element> {
   const users = await UserRepository.getCreators()
@@ -41,9 +42,20 @@ export default async function Home(): Promise<JSX.Element> {
             {users.map(user => (
               <Link key={user.username} href={`/${user.username}`}>
                 <Card className="group relative aspect-square bg-amber-100 p-6 transition-colors hover:bg-amber-200">
-                  <span className="text-2xl font-bold text-amber-900 ">
-                    {getInitials(user.name || user.username)}
-                  </span>
+                  <div className="flex flex-col items-center justify-center h-full space-y-4">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage 
+                        src={user.profileImage || undefined} 
+                        alt={user.name || user.username} 
+                      />
+                      <AvatarFallback>
+                        {getInitials(user.name || user.username)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-lg font-medium text-amber-900">
+                      {user.name || user.username}
+                    </span>
+                  </div>
                 </Card>
               </Link>
             ))}
