@@ -1,4 +1,6 @@
 import Header from "@/components/header"
+import { auth } from "@/auth"
+import Link from "next/link"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -7,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Coffee, Facebook, Heart, Instagram, MessageCircle, Music, Twitter, Youtube } from "lucide-react"
 import { UserRepository } from "@/app/repositories/userRepository"
-
 interface CreatorProfileProps {
   params: { username: string }
 }
@@ -27,6 +28,7 @@ async function fetchCreatorData(username: string): Promise<CreatorData | null> {
 
     return {
       username: user.username,
+      email: user.email,
       bio: user.bio || `${username} is a creator based in Mongolia.`,
       profileImage: user.profileImage,
       name: user.name,
@@ -40,6 +42,8 @@ async function fetchCreatorData(username: string): Promise<CreatorData | null> {
 export default async function CreatorProfile({ params }: CreatorProfileProps) {
   const { username } = params;
   const creatorData = await fetchCreatorData(username);
+  const session = await auth();
+  const isOwnProfile = session?.user?.email === creatorData?.email;
 
   if (!creatorData) {
     // Handle case when creator is not found
@@ -76,7 +80,18 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
                       {creatorData.name?.substring(0, 2) || 'CR'}
                     </AvatarFallback>
                   </Avatar>
-                  <h2 className="text-2xl font-bold">{creatorData.name || creatorData.username}</h2>
+                  <div className="text-center space-y-2">
+                    <h2 className="text-2xl font-bold">
+                      {creatorData.name || creatorData.username}
+                    </h2>
+                    {isOwnProfile && (
+                      <Link href={`/${username}/edit`}>
+                        <Button variant="outline" size="sm">
+                          Edit Profile
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
