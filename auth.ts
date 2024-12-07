@@ -1,6 +1,6 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session } from "next-auth"
 import Google from "next-auth/providers/google"
-import prisma from "@/lib/prisma"
+import { UserRepository } from '@/app/repositories/userRepository'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -33,17 +33,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false
       }
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (session.user?.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: session.user.email },
-        })
+        const dbUser = await UserRepository.findByEmail(session.user.email)
         if (dbUser) {
           session.user.id = dbUser.id
           session.user.username = dbUser.username
         }
       }
-      return session
+      return session as Session
     }
   },
   pages: {

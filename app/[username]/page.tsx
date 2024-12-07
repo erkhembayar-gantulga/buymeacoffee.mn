@@ -15,6 +15,7 @@ interface CreatorProfileProps {
 
 interface CreatorData {
   username: string;
+  email: string | null;
   bio: string | null;
   profileImage: string | null;
   name: string | null;

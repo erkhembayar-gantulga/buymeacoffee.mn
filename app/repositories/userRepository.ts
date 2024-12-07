@@ -28,4 +28,17 @@ export class UserRepository {
       return null;
     }
   }
+
+
+  static async findByEmail(email: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email }
+      });
+      return user;
+    } catch (error) {
+      console.error('Failed to fetch creator data:', error);
+      return null;
+    }
+  }
 } 
