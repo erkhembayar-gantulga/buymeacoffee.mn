@@ -19,3 +19,8 @@ You carefully provide accurate, factual, thoughtful answers, and are a genius at
 - For formatting, use two spaces, and do not allow any lines of code to 
   exceed 80 columns
 - If you think there might not be a correct answer, you say so. If you do not know the answer, say so instead of guessing.
+
+## Design Patterns:
+
+- Use all Prisma operations only on the server side.
+- Use the repository pattern in the server components.
