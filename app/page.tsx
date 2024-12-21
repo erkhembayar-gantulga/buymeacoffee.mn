@@ -8,10 +8,12 @@ import Header from "@/components/header"
 import { UserRepository } from '@/app/repositories/userRepository'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { auth } from "@/auth"
+import { CommentRepository } from '@/lib/repositories/comment-repository'
 
 export default async function Home(): Promise<JSX.Element> {
   const users = await UserRepository.getCreators()
   const session = await auth()
+  const comments = await CommentRepository.getLatest()
   
   // Get current user's profile if they're logged in
   const currentUserProfile = session?.user ? 
@@ -73,12 +75,32 @@ export default async function Home(): Promise<JSX.Element> {
         <div className="mt-16">
           <h3 className="mb-6 text-xl font-semibold">Сүүлийн сэтгэгдлүүд</h3>
           <div className="space-y-4">
-            <div className="rounded-lg border bg-card p-4">
-              <h4 className="font-medium">Сэтгэгдэл 1</h4>
-            </div>
-            <div className="rounded-lg border bg-card p-4">
-              <h4 className="font-medium">Сэтгэгдэл 2</h4>
-            </div>
+            {comments.map(comment => (
+              <div key={comment.id} className="rounded-lg border bg-card p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage 
+                      src={comment.author.profileImage || undefined}
+                      alt={comment.author.name || comment.author.username} 
+                    />
+                    <AvatarFallback>
+                      {getInitials(comment.author.name || comment.author.username)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">
+                    {comment.author.name || comment.author.username}
+                  </span>
+                  <span className="text-muted-foreground">→</span>
+                  <Link 
+                    href={`/${comment.creator.username}`}
+                    className="text-sm text-muted-foreground hover:underline"
+                  >
+                    {comment.creator.name || comment.creator.username}
+                  </Link>
+                </div>
+                <p className="text-sm text-muted-foreground">{comment.content}</p>
+              </div>
+            ))}
           </div>
         </div>
       </main>

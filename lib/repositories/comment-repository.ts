@@ -5,11 +5,20 @@ export interface Comment {
   username: string
   content: string
   createdAt: string
+  author: {
+    username: string
+    name: string | null
+    profileImage: string | null
+  }
+  creator: {
+    username: string
+    name: string | null
+    profileImage: string | null
+  }
 }
 
 export class CommentRepository {
   static async fetchComments(username: string): Promise<Comment[]> {
-    console.log('fetching comments for', username)
     const comments = await prisma.comment.findMany({
       where: {
         creator: {
@@ -25,7 +34,16 @@ export class CommentRepository {
         createdAt: true,
         creator: {
           select: {
-            username: true
+            username: true,
+            name: true,
+            profileImage: true
+          }
+        },
+        author: {
+          select: {
+            username: true,
+            name: true,
+            profileImage: true
           }
         }
       }
@@ -35,7 +53,46 @@ export class CommentRepository {
       id: comment.id,
       username: comment.creator.username,
       content: comment.content,
-      createdAt: comment.createdAt.toISOString()
+      createdAt: comment.createdAt.toISOString(),
+      author: comment.author,
+      creator: comment.creator
+    }))
+  }
+
+  static async getLatest(limit = 10): Promise<Comment[]> {
+    const comments = await prisma.comment.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
+      },
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            username: true,
+            name: true,
+            profileImage: true
+          }
+        },
+        creator: {
+          select: {
+            username: true,
+            name: true,
+            profileImage: true,
+          }
+        }
+      }
+    })
+
+    return comments.map(comment => ({
+      id: comment.id,
+      username: comment.creator.username,
+      content: comment.content,
+      createdAt: comment.createdAt.toISOString(),
+      author: comment.author,
+      creator: comment.creator
     }))
   }
 } 
