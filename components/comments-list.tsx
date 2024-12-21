@@ -1,13 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-interface Comment {
-  id: number
-  username: string
-  content: string
-  createdAt: string
-}
+import { Comment } from '@/lib/repositories/comment-repository'
 
 interface CommentsListProps {
   username: string
@@ -15,20 +9,31 @@ interface CommentsListProps {
 
 export default function CommentsList({ username }: CommentsListProps) {
   const [comments, setComments] = useState<Comment[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Simulating API call to fetch comments
-    const fetchComments = async () => {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setComments([
-        { id: 1, username: 'fan1', content: 'Great work!', createdAt: '2023-04-01' },
-        { id: 2, username: 'supporter2', content: 'Keep it up!', createdAt: '2023-04-02' },
-      ])
+    const loadComments = async () => {
+      try {
+        console.log('loading comments for', username)
+        const response = await fetch(`/api/comments/${username}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch comments')
+        }
+        const fetchedComments = await response.json()
+        setComments(fetchedComments)
+      } catch (error) {
+        console.error('Failed to fetch comments:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    fetchComments()
+    loadComments()
   }, [username])
+
+  if (isLoading) {
+    return <div className="bg-white p-6 rounded-lg shadow-md">Loading...</div>
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">

@@ -9,11 +9,16 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Coffee, Facebook, Heart, Instagram, MessageCircle, Music, Twitter, Youtube } from "lucide-react"
 import { UserRepository } from "@/app/repositories/userRepository"
+import CommentForm from "@/components/comment-form"
+import CommentsList from "@/components/comments-list"
+import { Suspense } from "react"
+
 interface CreatorProfileProps {
   params: { username: string }
 }
 
 interface CreatorData {
+  id: number;
   username: string;
   email: string | null;
   bio: string | null;
@@ -33,6 +38,7 @@ async function fetchCreatorData(username: string): Promise<CreatorData | null> {
       bio: user.bio || `${username} is a creator based in Mongolia.`,
       profileImage: user.profileImage,
       name: user.name,
+      id: user.id,
     };
   } catch (error) {
     console.error('Failed to fetch creator data:', error);
@@ -200,6 +206,20 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
                       <span className="text-sm text-muted-foreground">1</span>
                     </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Comments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CommentForm creatorId={creatorData.id} />
+                <div className="mt-6">
+                  <Suspense fallback={<div>Loading comments...</div>}>
+                    <CommentsList username={creatorData.username} />
+                  </Suspense>
                 </div>
               </CardContent>
             </Card>
