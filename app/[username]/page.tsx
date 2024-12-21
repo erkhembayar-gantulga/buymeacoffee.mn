@@ -1,59 +1,75 @@
-import Header from "@/components/header"
-import { auth } from "@/auth"
-import Link from "next/link"
+'use client'
 
+import { useState, useEffect } from 'react'
+import Header from "@/components/header"
+import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Coffee, Facebook, Heart, Instagram, MessageCircle, Music, Twitter, Youtube } from "lucide-react"
-import { UserRepository } from "@/app/repositories/userRepository"
 import CommentForm from "@/components/comment-form"
 import CommentsList from "@/components/comments-list"
 import { Suspense } from "react"
-
-interface CreatorProfileProps {
-  params: { username: string }
-}
+import { Comment } from '@/lib/repositories/comment-repository'
 
 interface CreatorData {
-  id: number;
-  username: string;
-  email: string | null;
-  bio: string | null;
-  profileImage: string | null;
-  name: string | null;
+  id: number
+  username: string
+  email: string | null
+  bio: string | null
+  profileImage: string | null
+  name: string | null
+  isOwnProfile: boolean
 }
 
-async function fetchCreatorData(username: string): Promise<CreatorData | null> {
-  try {
-    const user = await UserRepository.findByUsername(username);
+export default function CreatorProfile({ params }: { params: { username: string } }) {
+  const [lastComment, setLastComment] = useState<Comment | null>(null)
+  const [creatorData, setCreatorData] = useState<CreatorData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-    if (!user) return null;
+  useEffect(() => {
+    const loadCreatorData = async () => {
+      try {
+        const response = await fetch(`/api/creators/${params.username}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch creator data')
+        }
+        const data = await response.json()
+        setCreatorData(data)
+      } catch (error) {
+        console.error('Failed to fetch creator data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    return {
-      username: user.username,
-      email: user.email,
-      bio: user.bio || `${username} is a creator based in Mongolia.`,
-      profileImage: user.profileImage,
-      name: user.name,
-      id: user.id,
-    };
-  } catch (error) {
-    console.error('Failed to fetch creator data:', error);
-    return null;
+    loadCreatorData()
+  }, [params.username])
+
+  const handleNewComment = (comment: Comment) => {
+    setLastComment(comment)
   }
-}
 
-export default async function CreatorProfile({ params }: CreatorProfileProps) {
-  const { username } = params;
-  const creatorData = await fetchCreatorData(username);
-  const session = await auth();
-  const isOwnProfile = session?.user?.email === creatorData?.email;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
+        <Header showLoginButton={false} />
+        <main className="container py-8">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold">Loading...</h2>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    )
+  }
 
   if (!creatorData) {
-    // Handle case when creator is not found
     return (
       <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
         <Header showLoginButton={false} />
@@ -67,7 +83,7 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
           </Card>
         </main>
       </div>
-    );
+    )
   }
 
   return (
@@ -91,8 +107,8 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
                     <h2 className="text-2xl font-bold">
                       {creatorData.name || creatorData.username}
                     </h2>
-                    {isOwnProfile && (
-                      <Link href={`/${username}/edit`}>
+                    {creatorData.isOwnProfile && (
+                      <Link href={`/${creatorData.username}/edit`}>
                         <Button variant="outline" size="sm">
                           Edit Profile
                         </Button>
@@ -215,10 +231,16 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
                 <CardTitle>Comments</CardTitle>
               </CardHeader>
               <CardContent>
-                <CommentForm creatorId={creatorData.id} />
+                <CommentForm 
+                  creatorId={creatorData.id} 
+                  onCommentAdded={handleNewComment}
+                />
                 <div className="mt-6">
                   <Suspense fallback={<div>Loading comments...</div>}>
-                    <CommentsList username={creatorData.username} />
+                    <CommentsList 
+                      username={params.username}
+                      newComment={lastComment}
+                    />
                   </Suspense>
                 </div>
               </CardContent>

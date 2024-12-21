@@ -6,13 +6,14 @@ import { Textarea } from './ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useSession } from 'next-auth/react'
 import { Smile } from 'lucide-react'
+import { Comment } from '@/lib/repositories/comment-repository'
 
 interface CommentFormProps {
   creatorId: number
-  onSuccess?: () => void
+  onCommentAdded: (comment: Comment) => void
 }
 
-export default function CommentForm({ creatorId, onSuccess }: CommentFormProps) {
+export default function CommentForm({ creatorId, onCommentAdded }: CommentFormProps) {
   const { data: session } = useSession()
   const [content, setContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -33,8 +34,9 @@ export default function CommentForm({ creatorId, onSuccess }: CommentFormProps) 
       })
 
       if (response.ok) {
+        const newComment = await response.json()
+        onCommentAdded(newComment)
         setContent('')
-        onSuccess?.()
       }
     } catch (error) {
       console.error('Failed to post comment:', error)

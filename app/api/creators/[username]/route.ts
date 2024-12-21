@@ -1,24 +1,34 @@
-import { auth } from "@/auth"
-import prisma from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { NextResponse } from 'next/server'
+import { UserRepository } from '@/app/repositories/userRepository'
+import { auth } from '@/auth'
 
 export async function GET(
   request: Request,
   { params }: { params: { username: string } }
 ) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { username: params.username }
-    })
+    const user = await UserRepository.findByUsername(params.username)
+    const session = await auth()
 
     if (!user) {
-      return new NextResponse("User not found", { status: 404 })
+      return NextResponse.json({ error: 'Creator not found' }, { status: 404 })
     }
 
-    return NextResponse.json(user)
+    return NextResponse.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      bio: user.bio || `${user.username} is a creator based in Mongolia.`,
+      profileImage: user.profileImage,
+      name: user.name,
+      isOwnProfile: session?.user?.email === user.email
+    })
   } catch (error) {
-    console.error('Failed to fetch user:', error)
-    return new NextResponse("Internal Server Error", { status: 500 })
+    console.error('Failed to fetch creator data:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch creator data' },
+      { status: 500 }
+    )
   }
 }
 

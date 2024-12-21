@@ -5,9 +5,10 @@ import { Comment } from '@/lib/repositories/comment-repository'
 
 interface CommentsListProps {
   username: string
+  newComment?: Comment | null
 }
 
-export default function CommentsList({ username }: CommentsListProps) {
+export default function CommentsList({ username, newComment }: CommentsListProps) {
   const [comments, setComments] = useState<Comment[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -30,6 +31,12 @@ export default function CommentsList({ username }: CommentsListProps) {
 
     loadComments()
   }, [username])
+
+  useEffect(() => {
+    if (newComment) {
+      setComments(prevComments => [newComment, ...prevComments])
+    }
+  }, [newComment])
 
   if (isLoading) {
     return <div className="bg-white p-6 rounded-lg shadow-md">Loading...</div>
