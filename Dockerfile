@@ -2,7 +2,7 @@
 FROM node:20-alpine
 
 # Install bash
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash openssl openssl-dev
 
 # Set the working directory
 WORKDIR /app
