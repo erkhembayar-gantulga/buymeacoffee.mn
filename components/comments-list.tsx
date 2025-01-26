@@ -51,7 +51,7 @@ export default function CommentsList({ username, newComment }: CommentsListProps
         <ul className="space-y-4">
           {comments.map((comment) => (
             <li key={comment.id} className="border-b pb-4">
-              <p className="font-semibold">{comment.username}</p>
+              <p className="font-semibold">{comment.author.name || comment.author.username}</p>
               <p>{comment.content}</p>
               <p className="text-sm text-gray-500">{comment.createdAt}</p>
             </li>
