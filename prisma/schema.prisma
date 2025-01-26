@@ -41,3 +41,29 @@ model Comment {
   creatorId Int
   creator   User     @relation("CreatorComments", fields: [creatorId], references: [id])
 }
+
+model Creator {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String?
+  bio          String?
+  profileImage String?
+  name         String?
+  payments     Payment[] @relation("CreatorPayments")
+} 
+
+model Payment {
+  id          String   @id @default(uuid())
+  amount      Float
+  currency    String
+  status      String
+  paymentIntentId String @unique
+  creatorId   Int
+  creator     Creator  @relation("CreatorPayments", fields: [creatorId], references: [id])
+  name        String?
+  message     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([creatorId])
+}

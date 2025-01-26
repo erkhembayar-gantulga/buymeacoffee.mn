@@ -28,6 +28,12 @@ export default function CreatorProfile({ params }: { params: { username: string 
   const [lastComment, setLastComment] = useState<Comment | null>(null)
   const [creatorData, setCreatorData] = useState<CreatorData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedAmount, setSelectedAmount] = useState<number>(1)
+  const [customAmount, setCustomAmount] = useState('')
+  const [name, setName] = useState('')
+  const [message, setMessage] = useState('')
+  const [errors, setErrors] = useState<{ amount?: string }>({})
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     const loadCreatorData = async () => {
@@ -50,6 +56,42 @@ export default function CreatorProfile({ params }: { params: { username: string 
 
   const handleNewComment = (comment: Comment) => {
     setLastComment(comment)
+  }
+
+  const validateForm = () => {
+    const newErrors: { amount?: string } = {}
+    const amount = customAmount ? Number(customAmount) : selectedAmount
+    
+    if (isNaN(amount) || amount < 1) {
+      newErrors.amount = 'Amount must be at least $1'
+    }
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSupport = async () => {
+    if (!validateForm()) return
+    
+    setIsProcessing(true)
+    try {
+      const amount = customAmount ? Number(customAmount) : selectedAmount
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: amount * 100, // Convert to cents
+          creatorId: creatorData?.id,
+          name,
+          message
+        })
+      })
+      
+      const { clientSecret } = await response.json()
+      // Integrate with Stripe.js here
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   if (isLoading) {
@@ -155,24 +197,58 @@ export default function CreatorProfile({ params }: { params: { username: string 
                 <CardTitle>Support Creator</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="mb-4 flex justify-between">
-                  <Button variant="outline" className="w-[30%]">
-                    <Coffee className="mr-2 h-4 w-4" />
-                    $1
-                  </Button>
-                  <Button variant="outline" className="w-[30%]">
-                    <Coffee className="mr-2 h-4 w-4" />
-                    $3
-                  </Button>
-                  <Button variant="outline" className="w-[30%]">
-                    <Coffee className="mr-2 h-4 w-4" />
-                    $5
-                  </Button>
+                <div className="mb-4 flex justify-between gap-2">
+                  {[1, 3, 5].map((amount) => (
+                    <Button
+                      key={amount}
+                      variant={selectedAmount === amount ? 'default' : 'outline'}
+                      className="w-[30%]"
+                      onClick={() => {
+                        setSelectedAmount(amount)
+                        setCustomAmount('')
+                      }}
+                    >
+                      <Coffee className="mr-2 h-4 w-4" />
+                      ${amount}
+                    </Button>
+                  ))}
                 </div>
+                
+                <div className="mb-4">
+                  <Input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    placeholder="Or enter custom amount"
+                    value={customAmount}
+                    onChange={(e) => {
+                      setCustomAmount(e.target.value)
+                      setSelectedAmount(0)
+                    }}
+                  />
+                  {errors.amount && (
+                    <p className="text-sm text-red-500 mt-1">{errors.amount}</p>
+                  )}
+                </div>
+
                 <div className="space-y-4">
-                  <Input placeholder="Your name" />
-                  <Textarea placeholder="Leave a message..." />
-                  <Button className="w-full">Support</Button>
+                  <Input
+                    placeholder="Your name (optional)"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="Leave a message... (optional)"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                  <Button
+                    className="w-full"
+                    onClick={handleSupport}
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? 'Processing...' : 'Support'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
