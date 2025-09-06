@@ -1,6 +1,8 @@
-BuyMeACoffee.mn
+# BuyMeACoffee.mn
 
-Goal
+Languages: [English](README.md) | [Mongolian](README_mn.md)
+
+## Goal
 
 - Enable Mongolian creators to monetize their work with small
   one‑off tips ("buy a coffee"), while keeping setup simple and fast.
@@ -9,7 +11,7 @@ Goal
 - Provide a clear path for creators to onboard, share a public page,
   and receive support.
 
-What it solves
+## What it solves
 
 - Creators lack an easy local alternative to global tipping products.
 - Fans want a lightweight way to show appreciation without complex
@@ -17,7 +19,7 @@ What it solves
 - A single shareable page per creator unifies profile, comments, and
   support.
 
-Key values provided
+## Key values provided
 
 - Fast onboarding: Google sign‑in, create page in minutes.
 - Simple supporter UX: pick an amount, leave a message, submit.
@@ -25,7 +27,7 @@ Key values provided
 - Transparent: recent support and comments visible on creator pages and
   the homepage.
 
-How it works (high‑level)
+## How it works (high‑level)
 
 1. Auth: Users sign in via Google using NextAuth. On first sign‑in a
    `User` is upserted.
@@ -37,7 +39,7 @@ How it works (high‑level)
 4. Discovery: Homepage lists creators with `creatorProfile` and recent
    comments.
 
-Architecture
+## Architecture
 
 - Framework: Next.js 14 App Router, React 18, TypeScript.
 - Auth: NextAuth (Google provider) via `app/api/auth/[...nextauth]` and
@@ -48,7 +50,7 @@ Architecture
 - Repository pattern: Query logic in `app/repositories/*` and
   `lib/repositories/*`. Prisma operations run server‑side only.
 
-Data model (Prisma)
+## Data model (Prisma)
 
 - User: id, email, name, username, profileImage, timestamps
   - Relations: comments authored, comments received via creator role,
@@ -60,40 +62,46 @@ Data model (Prisma)
 - Payment: id (uuid), amount, currency, status, paymentIntentId
   (unique), creatorId -> Creator, optional name/message
 
-Core flows and components
+## Core flows and components
 
-- Homepage (`app/page.tsx`)
-  - Lists creators via `UserRepository.getCreators()`
-  - Shows latest comments via `CommentRepository.getLatest()`
-- Creator page (`app/[username]/page.tsx`)
-  - Fetches creator profile via `/api/creators/[username]`
-  - Support form creates payment intent via `/api/create-payment-intent`
-  - Comments section uses `CommentForm` and `CommentsList`
-- Onboarding (`app/@creator/page.tsx`, `app/onboarding/creator/page.tsx`)
-  - Redirects based on whether creator page exists
-  - `CreatorOnboardingForm` validates with Zod and posts to
-    `/api/creators`
-- Edit profile (`app/[username]/edit/page.tsx`)
-  - Updates via `PUT /api/creators/[username]`
+### Homepage (`app/page.tsx`)
+- Lists creators via `UserRepository.getCreators()`
+- Shows latest comments via `CommentRepository.getLatest()`
 
-API overview
+### Creator page (`app/[username]/page.tsx`)
+- Fetches creator profile via `/api/creators/[username]`
+- Support form creates payment intent via `/api/create-payment-intent`
+- Comments section uses `CommentForm` and `CommentsList`
 
-- Auth
-  - `GET/POST /api/auth/[...nextauth]`: NextAuth handlers
-- Creators
-  - `POST /api/creators`: create creator for current user
-  - `GET /api/creators/[username]`: public profile payload with
-    `isOwnProfile`
-  - `PUT /api/creators/[username]`: update username/bio for owner
-- Comments
-  - `POST /api/comments`: create comment (auth required)
-  - `GET /api/comments/[username]`: list comments for a creator
-- Payments (mock)
-  - `POST /api/create-payment-intent`: create and persist mock payment
-    intent as `Payment`, returns `clientSecret`
-  - `POST /api/confirm-payment`: confirm mock payment by `clientSecret`
+### Onboarding (`app/@creator/page.tsx`, `app/onboarding/creator/page.tsx`)
+- Redirects based on whether creator page exists
+- `CreatorOnboardingForm` validates with Zod and posts to
+  `/api/creators`
 
-Security and validation
+### Edit profile (`app/[username]/edit/page.tsx`)
+- Updates via `PUT /api/creators/[username]`
+
+## API overview
+
+### Auth
+- `GET/POST /api/auth/[...nextauth]`: NextAuth handlers
+
+### Creators
+- `POST /api/creators`: create creator for current user
+- `GET /api/creators/[username]`: public profile payload with
+  `isOwnProfile`
+- `PUT /api/creators/[username]`: update username/bio for owner
+
+### Comments
+- `POST /api/comments`: create comment (auth required)
+- `GET /api/comments/[username]`: list comments for a creator
+
+### Payments (mock)
+- `POST /api/create-payment-intent`: create and persist mock payment
+  intent as `Payment`, returns `clientSecret`
+- `POST /api/confirm-payment`: confirm mock payment by `clientSecret`
+
+## Security and validation
 
 - Auth required for posting comments and creating payment intents.
 - Creator creation restricted to current session user; unique username
@@ -101,14 +109,14 @@ Security and validation
 - On update, ownership is checked; username conflicts rejected.
 - Zod validation on onboarding form; server‑side guards on routes.
 
-Local development
+## Local development
 
-Prerequisites
+### Prerequisites
 
 - Node.js 20+, Yarn
 - Docker (for Postgres via docker‑compose)
 
-Environment variables
+### Environment variables
 
 - Required for app (examples shown in `docker-compose.yml`):
   - AUTH_GOOGLE_ID
@@ -117,7 +125,7 @@ Environment variables
   - DATABASE_URL (set automatically in docker compose for the app
     container; set locally in shell for dev)
 
-Run with Docker
+### Run with Docker
 
 1. yarn install
 2. docker compose up --build
@@ -127,7 +135,7 @@ Run with Docker
    - yarn prisma:seed
 4. App runs at http://localhost:3000
 
-Run locally (without Docker)
+### Run locally (without Docker)
 
 1. Start Postgres and set `DATABASE_URL`
 2. yarn install
@@ -135,13 +143,13 @@ Run locally (without Docker)
 4. yarn prisma:seed
 5. yarn dev
 
-Tech stack
+## Tech stack
 
 - Next.js 14 (App Router), React 18, TypeScript
 - NextAuth (Google), Prisma, PostgreSQL
 - Tailwind CSS, shadcn/ui, Radix UI
 
-Project structure (selected)
+## Project structure (selected)
 
 - app/
   - api/
@@ -164,7 +172,7 @@ Project structure (selected)
 - prisma/
   - schema.prisma, seed.ts
 
-Development notes
+## Development notes
 
 - Prisma client is a singleton (see `lib/prisma.ts`).
 - All Prisma operations are server‑side (API routes or server components).
@@ -173,13 +181,13 @@ Development notes
   `/api/create-payment-intent` and `/api/confirm-payment` logic and
   wiring Stripe.js on the client.
 
-Roadmap (from git history and current code)
+## Roadmap (from git history and current code)
 
 - Real Stripe integration (server + client)
 - Dashboard for creators (analytics, payout settings)
 - Reactions on comments, richer supporter feed
 - Localization improvements and accessibility polish
 
-License
+## License
 
 Sustainable Use License

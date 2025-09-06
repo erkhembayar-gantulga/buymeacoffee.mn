@@ -1,6 +1,8 @@
-BuyMeACoffee.mn
+# BuyMeACoffee.mn
 
-Зорилго
+Хэл: [Англи](README.md) | [Монгол](README_mn.md)
+
+## Зорилго
 
 - Монголын бүтээгчдэд бүтээлээ хялбар аргаар мөнгөн дэмжлэг авч,
   жижиг нэг удаагийн хандив ("кофе авч өгөх") хэлбэрээр
@@ -10,7 +12,7 @@ BuyMeACoffee.mn
 - Бүтээгчдэд бүртгэлээ хурдан тохируулж, олон нийттэй хуваалцах
   хуудсаа гаргаж, дэмжлэг авах тодорхой зам гаргах.
 
-Юуг шийддэг вэ
+## Юуг шийддэг вэ
 
 - Дотоодод хэрэглэж болох, дэлхийн үйлчилгээний орлуулга болсон
   хялбар хандивын шийдэл бүтээгчдэд үгүйлэгддэг.
@@ -19,7 +21,7 @@ BuyMeACoffee.mn
 - Нэг бүтээгчид нэг хуваалцагдах хуудас нь профайл, сэтгэгдэл,
   дэмжлэгийг нэгтгэнэ.
 
-Өгдөг үнэ цэнэ
+## Өгдөг үнэ цэнэ
 
 - Хурдан эхлүүлэлт: Google нэвтрэлт, минутын дотор хуудас нээх.
 - Дэмжигчийн энгийн туршлага: дүн сонгох, зурвас үлдээх, илгээх.
@@ -27,7 +29,7 @@ BuyMeACoffee.mn
 - Ил тод байдал: сүүлийн дэмжлэг, сэтгэгдлүүд бүтээгчийн хуудас
   болон нүүр хуудсанд харагдана.
 
-Яаж ажилладаг вэ (өндөр түвшин)
+## Яаж ажилладаг вэ (өндөр түвшин)
 
 1. Баталгаажуулалт: Хэрэглэгч NextAuth ашиглан Google‑оор нэвтэрнэ.
    Эхний нэвтрэлтээр `User` бичлэг үүсэх/шинэчлэгдэнэ.
@@ -39,7 +41,7 @@ BuyMeACoffee.mn
 4. Нээлт: Нүүр хуудас `creatorProfile`‑той хэрэглэгчдийг болон сүүлийн
    сэтгэгдлүүдийг жагсаана.
 
-Архитектур
+## Архитектур
 
 - Framework: Next.js 14 App Router, React 18, TypeScript.
 - Auth: NextAuth (Google) — `app/api/auth/[...nextauth]`, `auth.ts`.
@@ -50,7 +52,7 @@ BuyMeACoffee.mn
 - Repository загвар: Асуулгын логик `app/repositories/*`,
   `lib/repositories/*` дор. Prisma үйлдлүүд зөвхөн сервер талд.
 
-Өгөгдлийн модель (Prisma)
+## Өгөгдлийн модель (Prisma)
 
 - User: id, email, name, username, profileImage, timestamps
   - Харилцаа: бичсэн сэтгэгдлүүд, бүтээгчийн хувиар авсан
@@ -62,42 +64,48 @@ BuyMeACoffee.mn
 - Payment: id (uuid), amount, currency, status, paymentIntentId
   (давтагдашгүй), creatorId -> Creator, заавал биш name/message
 
-Гол урсгал ба бүрдлүүд
+## Гол урсгал ба бүрдлүүд
 
-- Нүүр хуудас (`app/page.tsx`)
-  - `UserRepository.getCreators()` ашиглан бүтээгчдийг жагсаана
-  - `CommentRepository.getLatest()` ашиглан сүүлийн сэтгэгдлүүдийг
-    харуулна
-- Бүтээгчийн хуудас (`app/[username]/page.tsx`)
-  - `/api/creators/[username]` замаас профайлыг авна
-  - Дэмжлэгийн маягт `/api/create-payment-intent` замаар төлбөрийн
-    санаачилга үүсгэнэ
-  - Сэтгэгдлийн хэсэг `CommentForm`, `CommentsList` бүрдлүүдийг
-    ашиглана
-- Онбординг (`app/@creator/page.tsx`, `app/onboarding/creator/page.tsx`)
-  - Бүтээгчийн хуудас байгаа эсэхээс шалтгаалж чиглүүлнэ
-  - `CreatorOnboardingForm` Zod‑оор шалгаж `/api/creators` руу илгээнэ
-- Профайл засах (`app/[username]/edit/page.tsx`)
-  - `PUT /api/creators/[username]` замаар шинэчилнэ
+### Нүүр хуудас (`app/page.tsx`)
+- `UserRepository.getCreators()` ашиглан бүтээгчдийг жагсаана
+- `CommentRepository.getLatest()` ашиглан сүүлийн сэтгэгдлүүдийг
+  харуулна
 
-API тойм
+### Бүтээгчийн хуудас (`app/[username]/page.tsx`)
+- `/api/creators/[username]` замаас профайлыг авна
+- Дэмжлэгийн маягт `/api/create-payment-intent` замаар төлбөрийн
+  санаачилга үүсгэнэ
+- Сэтгэгдлийн хэсэг `CommentForm`, `CommentsList` бүрдлүүдийг
+  ашиглана
 
-- Auth
-  - `GET/POST /api/auth/[...nextauth]`: NextAuth handlers
-- Creators
-  - `POST /api/creators`: идэвхтэй хэрэглэгчид Creator үүсгэнэ
-  - `GET /api/creators/[username]`: олон нийтэд нээлттэй профайл мэдээлэл
-    (`isOwnProfile` талбартай)
-  - `PUT /api/creators/[username]`: эзэмшигч нь username/bio шинэчилнэ
-- Comments
-  - `POST /api/comments`: сэтгэгдэл үүсгэнэ (нэвтэрсэн байх шаардлагатай)
-  - `GET /api/comments/[username]`: тухайн бүтээгчийн сэтгэгдлүүд
-- Payments (хийсвэр)
-  - `POST /api/create-payment-intent`: хийсвэр төлбөрийн санаачилга
-    үүсгэж `Payment` болгон хадгална, `clientSecret` буцаана
-  - `POST /api/confirm-payment`: `clientSecret`‑ээр хийсвэр баталгаажуулалт
+### Онбординг (`app/@creator/page.tsx`, `app/onboarding/creator/page.tsx`)
+- Бүтээгчийн хуудас байгаа эсэхээс шалтгаалж чиглүүлнэ
+- `CreatorOnboardingForm` Zod‑оор шалгаж `/api/creators` руу илгээнэ
 
-Аюулгүй байдал ба шалгалт
+### Профайл засах (`app/[username]/edit/page.tsx`)
+- `PUT /api/creators/[username]` замаар шинэчилнэ
+
+## API тойм
+
+### Auth
+- `GET/POST /api/auth/[...nextauth]`: NextAuth handlers
+
+### Creators
+- `POST /api/creators`: идэвхтэй хэрэглэгчид Creator үүсгэнэ
+- `GET /api/creators/[username]`: олон нийтэд нээлттэй профайл мэдээлэл
+  (`isOwnProfile` талбартай)
+- `PUT /api/creators/[username]`: эзэмшигч нь username/bio шинэчилнэ
+
+### Comments
+- `POST /api/comments`: сэтгэгдэл үүсгэнэ (нэвтэрсэн байх шаардлагатай)
+- `GET /api/comments/[username]`: тухайн бүтээгчийн сэтгэгдлүүд
+
+### Payments (хийсвэр)
+- `POST /api/create-payment-intent`: хийсвэр төлбөрийн санаачилга
+  үүсгэж `Payment` болгон хадгална, `clientSecret` буцаана
+- `POST /api/confirm-payment`: `clientSecret`‑ээр хийсвэр баталгаажуулалт
+
+## Аюулгүй байдал ба шалгалт
 
 - Сэтгэгдэл үүсгэх, төлбөрийн санаачилга үүсгэхэд нэвтэрсэн байх ёстой.
 - Creator үүсгэх нь зөвхөн тухайн сессийн хэрэглэгчид зөвшөөрөгдөнө;
@@ -106,14 +114,14 @@ API тойм
   татгалзана.
 - Онбординг маягтад Zod шалгалт; сервер талын хамгаалалт API дээр.
 
-Локал хөгжүүлэлт
+## Локал хөгжүүлэлт
 
-Шаардлага
+### Шаардлага
 
 - Node.js 20+, Yarn
 - Docker (Postgres‑ийг docker‑compose‑оор ажиллуулахад)
 
-Орчны хувьсагчууд
+### Орчны хувьсагчууд
 
 - Аппд шаардлагатай (жишээ нь `docker-compose.yml`‑д):
   - AUTH_GOOGLE_ID
@@ -122,7 +130,7 @@ API тойм
   - DATABASE_URL (app контейнерт compose‑оор тохируулагдана; локал
     хөгжүүлэлтэд терминалдаа тохируулна)
 
-Docker‑оор ажиллуулах
+### Docker‑оор ажиллуулах
 
 1. yarn install
 2. docker compose up --build
@@ -132,7 +140,7 @@ Docker‑оор ажиллуулах
    - yarn prisma:seed
 4. Апп http://localhost:3000 дээр ажиллана
 
-Docker‑гүйгээр ажиллуулах
+### Docker‑гүйгээр ажиллуулах
 
 1. Postgres асааж `DATABASE_URL` тохируулна
 2. yarn install
@@ -140,13 +148,13 @@ Docker‑гүйгээр ажиллуулах
 4. yarn prisma:seed
 5. yarn dev
 
-Технологийн стек
+## Технологийн стек
 
 - Next.js 14 (App Router), React 18, TypeScript
 - NextAuth (Google), Prisma, PostgreSQL
 - Tailwind CSS, shadcn/ui, Radix UI
 
-Төслийн бүтэц (сонгомол)
+## Төслийн бүтэц (сонгомол)
 
 - app/
   - api/
@@ -169,7 +177,7 @@ Docker‑гүйгээр ажиллуулах
 - prisma/
   - schema.prisma, seed.ts
 
-Хөгжүүлэлтийн тэмдэглэл
+## Хөгжүүлэлтийн тэмдэглэл
 
 - Prisma клиент нэг тохиолдол (`lib/prisma.ts`).
 - Бүх Prisma үйлдэл сервер талд (API замууд, сервер компонентууд).
@@ -179,14 +187,14 @@ Docker‑гүйгээр ажиллуулах
   `/api/confirm-payment` логикийг солиод, client талд Stripe.js‑ийг
   холбоно.
 
-Замын зураг (git түүх ба одоогийн кодоос)
+## Замын зураг (git түүх ба одоогийн кодоос)
 
 - Stripe‑ийн бүрэн интеграц (сервер + клиент)
 - Бүтээгчийн самбар (аналитик, төлбөрийн тохиргоо)
 - Сэтгэгдэлд реакшн, дэмжигчийн илүү баялаг түүх
 - Олон хэл, хүртээмжийн сайжруулалт
 
-Лиценз
+## Лиценз
 
 Sustainable Use License
 
