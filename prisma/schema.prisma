@@ -16,16 +16,16 @@ generator client {
 
 // Define your models here
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
   name         String?
-  username     String   @unique
+  username     String    @unique
   bio          String?
   profileImage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  comments         Comment[]
-  creatorComments  Comment[] @relation("CreatorComments")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  comments     Comment[]
+  creator      Creator?
 }
 
 model Comment {
@@ -37,9 +37,9 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User    @relation(fields: [authorId], references: [id])
   creatorId Int
-  creator   User     @relation("CreatorComments", fields: [creatorId], references: [id])
+  creator   Creator @relation(fields: [creatorId], references: [id])
 }
 
 model Creator {
@@ -49,21 +49,26 @@ model Creator {
   bio          String?
   profileImage String?
   name         String?
+  userId       Int       @unique
+  user         User      @relation(fields: [userId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   payments     Payment[] @relation("CreatorPayments")
-} 
+  comments     Comment[]
+}
 
 model Payment {
-  id          String   @id @default(uuid())
-  amount      Float
-  currency    String
-  status      String
-  paymentIntentId String @unique
-  creatorId   Int
-  creator     Creator  @relation("CreatorPayments", fields: [creatorId], references: [id])
-  name        String?
-  message     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(uuid())
+  amount          Float
+  currency        String
+  status          String
+  paymentIntentId String   @unique
+  creatorId       Int
+  creator         Creator  @relation("CreatorPayments", fields: [creatorId], references: [id])
+  name            String?
+  message         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([creatorId])
 }
