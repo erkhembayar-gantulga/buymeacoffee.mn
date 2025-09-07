@@ -17,12 +17,9 @@ services:
   app:
     build:
       context: .
-      args:
-        DB_URL: postgresql://bmc_user:test1234@db:5432/bmc_db?schema=public
-        DATABASE_HOSTNAME: db
-        DATABASE_PORT: 5432
-    volumes:
-      - .:/app
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://bmc_user:test1234@db:5432/bmc_db?schema=public
     ports:
       - "3000:3000"
     depends_on:

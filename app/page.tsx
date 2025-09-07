@@ -1,23 +1,39 @@
-import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Coffee } from "lucide-react"
 import Link from "next/link"
 import { getInitials } from '../utils/stringUtils'
 import Header from "@/components/header"
-import { UserRepository } from '@/app/repositories/userRepository'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { auth } from "@/auth"
-import { CommentRepository } from '@/lib/repositories/comment-repository'
 
-export default async function Home(): Promise<JSX.Element> {
-  const users = await UserRepository.getCreators()
-  const session = await auth()
-  const comments = await CommentRepository.getLatest()
-  
-  // Get current user's profile if they're logged in
-  const currentUserProfile = session?.user ? 
-    await UserRepository.findByUsername(session.user.username) : null
+type Creator = { username: string; name: string | null; profileImage: string | null }
+type HomeComment = {
+  id: number
+  content: string
+  createdAt: string
+  author: { username: string; name: string | null; profileImage: string | null }
+  creator: { username: string; name: string | null; profileImage: string | null }
+}
+
+export default async function Home() {
+  const [creators, comments]: [Creator[], HomeComment[]] = await Promise.all([
+    fetch(`/api/creators?limit=10`, { cache: 'no-store' })
+      .then(async (r) => (r.ok ? (await r.json() as Creator[]) : []))
+      .catch(() => []),
+    fetch(`/api/comments?limit=10`, { cache: 'no-store' })
+      .then(async (r) => (r.ok ? (await r.json() as HomeComment[]) : []))
+      .catch(() => []),
+  ])
+
+  // Session via API to avoid DB access during build
+  const session: any = await fetch(`/api/auth/session`, { cache: 'no-store' })
+    .then(async (r) => (r.ok ? await r.json() : null))
+    .catch(() => null)
+
+  const currentUserProfile = session?.user?.username
+    ? await fetch(`/api/creators/${session.user.username}`, { cache: 'no-store' })
+        .then(async (r) => (r.ok ? await r.json() : null))
+        .catch(() => null)
+    : null
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/50 to-background">
@@ -49,21 +65,18 @@ export default async function Home(): Promise<JSX.Element> {
         <div className="mt-16">
           <h3 className="mb-6 text-xl font-semibold">Бүтээгчид</h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {users.map(user => (
-              <Link key={user.username} href={`/${user.username}`}>
+            {creators.map((creator: Creator) => (
+              <Link key={creator.username} href={`/${creator.username}`}>
                 <Card className="group relative aspect-square bg-amber-100 p-6 transition-colors hover:bg-amber-200">
                   <div className="flex flex-col items-center justify-center h-full space-y-4">
                     <Avatar className="h-20 w-20">
-                      <AvatarImage 
-                        src={user.profileImage || undefined} 
-                        alt={user.name || user.username} 
-                      />
+                      <AvatarImage src={creator.profileImage || undefined} alt={creator.name || creator.username} />
                       <AvatarFallback>
-                        {getInitials(user.name || user.username)}
+                        {getInitials(creator.name || creator.username)}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-lg font-medium text-amber-900">
-                      {user.name || user.username}
+                      {creator.name || creator.username}
                     </span>
                   </div>
                 </Card>
@@ -75,7 +88,7 @@ export default async function Home(): Promise<JSX.Element> {
         <div className="mt-16">
           <h3 className="mb-6 text-xl font-semibold">Сүүлийн сэтгэгдлүүд</h3>
           <div className="space-y-4">
-            {comments.map(comment => (
+            {comments.map((comment: HomeComment) => (
               <div key={comment.id} className="rounded-lg border bg-card p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Avatar className="h-6 w-6">

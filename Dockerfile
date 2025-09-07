@@ -24,8 +24,7 @@ RUN yarn install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma Client without database validation
-ENV PRISMA_GENERATE_SKIP_VALIDATE=true
+# 🔥 Generate Prisma Client inside the container
 RUN yarn prisma generate
 
 # Build the Next.js app
@@ -38,11 +37,7 @@ EXPOSE 3000
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Copy wait-for-it script and make it executable
-COPY scripts/wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Start the application
-CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then yarn start; else yarn dev; fi"]
+# Start the application (always start prod server in container)
+CMD ["yarn", "start"]
