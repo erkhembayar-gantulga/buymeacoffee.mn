@@ -1,27 +1,29 @@
 import { NextResponse } from 'next/server'
-import { UserRepository } from '@/app/repositories/userRepository'
 import { auth } from '@/auth'
+import prisma from '@/lib/prisma'
 
 export async function GET(
   request: Request,
   { params }: { params: { username: string } }
 ) {
   try {
-    const user = await UserRepository.findByUsername(params.username)
+    const creator = await prisma.creator.findUnique({
+      where: { username: params.username }
+    })
     const session = await auth()
 
-    if (!user) {
+    if (!creator) {
       return NextResponse.json({ error: 'Creator not found' }, { status: 404 })
     }
 
     return NextResponse.json({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      bio: user.bio || `${user.username} is a creator based in Mongolia.`,
-      profileImage: user.profileImage,
-      name: user.name,
-      isOwnProfile: session?.user?.email === user.email
+      id: creator.id,
+      username: creator.username,
+      email: null,
+      bio: creator.bio,
+      profileImage: creator.profileImage,
+      name: creator.name,
+      isOwnProfile: !!session?.user?.id && session.user.id === creator.userId
     })
   } catch (error) {
     console.error('Failed to fetch creator data:', error)
@@ -38,42 +40,37 @@ export async function PUT(
 ) {
   try {
     const session = await auth()
-    
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
     const body = await request.json()
-    const { username, bio } = body
+    const { username, bio, name, profileImage } = body
 
-    // Verify user owns this profile
-    const currentUser = await prisma.user.findUnique({
+    // Verify ownership via creator.userId
+    const creator = await prisma.creator.findUnique({
       where: { username: params.username }
     })
-
-    if (!currentUser || currentUser.email !== session.user.email) {
+    if (!creator || creator.userId !== session.user.id) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    // Check if new username is already taken (if changed)
-    if (username !== params.username) {
-      const existingUser = await prisma.user.findUnique({
-        where: { username }
-      })
-
-      if (existingUser) {
+    // Check username uniqueness if changed
+    if (username && username !== params.username) {
+      const existing = await prisma.creator.findUnique({ where: { username } })
+      if (existing && existing.id !== creator.id) {
         return NextResponse.json({ error: "Username already taken" }, { status: 400 })
       }
     }
 
-    const user = await prisma.user.update({
-      where: { email: session.user.email },
-      data: { username, bio }
+    const updated = await prisma.creator.update({
+      where: { id: creator.id },
+      data: { username: username ?? creator.username, bio, name, profileImage }
     })
 
-    return NextResponse.json(user)
+    return NextResponse.json(updated)
   } catch (error) {
-    console.error('Failed to update user:', error)
+    console.error('Failed to update creator:', error)
     return new NextResponse("Internal Server Error", { status: 500 })
   }
 } 
