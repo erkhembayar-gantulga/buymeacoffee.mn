@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "@prisma/client": "^5.21.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
@@ -30,6 +31,8 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
+    "migrate:deploy": "prisma migrate deploy",
+    "vercel-build": "prisma migrate deploy && next build",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
