@@ -143,6 +143,21 @@ Languages: [English](README.md) | [Mongolian](README_mn.md)
 4. yarn prisma:seed
 5. yarn dev
 
+## Deployment (Vercel)
+
+1. **Environment Variables**:
+   - `DATABASE_URL`: Connection string for the app (can be pooled).
+   - `DIRECT_URL`: Direct connection string for migrations (required if `DATABASE_URL` is pooled).
+   - `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`: NextAuth configuration.
+
+2. **Build Settings**:
+   - **Build Command**: `npm run vercel-build` (Runs migrations before build).
+   - **Output Directory**: `Next.js default` (.next).
+
+3. **Prisma**:
+   - `postinstall` script runs `prisma generate` automatically.
+   - Migrations are handled by the custom build command.
+
 ## Tech stack
 
 - Next.js 14 (App Router), React 18, TypeScript
