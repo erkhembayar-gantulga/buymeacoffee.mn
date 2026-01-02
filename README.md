@@ -147,7 +147,7 @@ Languages: [English](README.md) | [Mongolian](README_mn.md)
 
 1. **Environment Variables**:
    - `DATABASE_URL`: Connection string for the app (can be pooled).
-   - `DIRECT_URL`: Direct connection string for migrations (required if `DATABASE_URL` is pooled).
+   - `POSTGRES_URL_NON_POOLING`: Direct connection string for migrations (required if `DATABASE_URL` is pooled).
    - `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`: NextAuth configuration.
 
 2. **Build Settings**:
